@@ -1,0 +1,4 @@
+(pymysql.err.OperationalError) (1054, "Unknown column 'stock_quantity' in 'field list'")
+[SQL: INSERT INTO medicines (brand_name, generic_name, category, strength, is_rx, price, stock_quantity, stock_date, opening_stock, total_sales_quantity, closing_stock) VALUES (%(brand_name)s, %(generic_name)s, %(category)s, %(strength)s, %(is_rx)s, %(price)s, %(stock_quantity)s, %(stock_date)s, %(opening_stock)s, %(total_sales_quantity)s, %(closing_stock)s)]
+[parameters: {'brand_name': 'Test2', 'generic_name': 'Test2', 'category': 'Test2', 'strength': 'Test2', 'is_rx': 0, 'price': 1.0, 'stock_quantity': 10, 'stock_date': datetime.date(2026, 4, 5), 'opening_stock': 0, 'total_sales_quantity': 0, 'closing_stock': 0}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

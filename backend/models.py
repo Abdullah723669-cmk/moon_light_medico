@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, Date
+from sqlalchemy import Column, Integer, String, Float, Boolean, Date, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 import datetime
 
@@ -25,15 +26,31 @@ class Prescription(Base):
     file_path = Column(String(500))
     status = Column(String(50), default="Pending")
 
+class OrderItem(Base):
+    __tablename__ = "order_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.id"))
+    medicine_id = Column(Integer, ForeignKey("medicines.id"))
+    brand_name = Column(String(255))
+    quantity = Column(Integer)
+    price = Column(Float)
+
+    order = relationship("Order", back_populates="items")
+
 class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
     order_number = Column(String(50), unique=True, index=True)
+    invoice_number = Column(String(50), unique=True, index=True)
     customer_name = Column(String(255))
     phone_number = Column(String(50))
     address = Column(String(500))
     total_cost = Column(Float)
+    discount_amount = Column(Float, default=0.0)
     payment_mode = Column(String(100))
     status = Column(String(50), default="Pending")
     order_date = Column(Date, default=datetime.date.today)
+
+    items = relationship("OrderItem", back_populates="order")

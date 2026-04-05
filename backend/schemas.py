@@ -41,11 +41,21 @@ class OrderItemBase(BaseModel):
     medicine_id: int
     quantity: int
 
+class OrderItemResponse(OrderItemBase):
+    id: int
+    order_id: int
+    brand_name: str
+    price: float
+
+    class Config:
+        from_attributes = True
+
 class OrderBase(BaseModel):
     customer_name: str
     phone_number: str
     address: str
     total_cost: float
+    discount_amount: float = 0.0
     payment_mode: str
 
 class OrderCreate(OrderBase):
@@ -54,8 +64,10 @@ class OrderCreate(OrderBase):
 class OrderResponse(OrderBase):
     id: int
     order_number: str
+    invoice_number: Optional[str] = None
     status: str
     order_date: Optional[date] = None
+    items: List[OrderItemResponse] = []
 
     class Config:
         from_attributes = True

@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 
 export default function Checkout() {
   const { user } = useAuth();
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, discountAmount } = useCart();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -15,7 +15,8 @@ export default function Checkout() {
     payment_mode: 'COD'
   });
 
-  const totalCost = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const subTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const totalCost = Math.max(0, subTotal - (discountAmount || 0));
 
   useEffect(() => {
     if (user) {
@@ -52,15 +53,16 @@ export default function Checkout() {
         body: JSON.stringify({
           ...formData,
           total_cost: totalCost,
+          discount_amount: discountAmount || 0,
           items: items
         })
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Order Placed Successfully!\nOrder Number: ${data.order_number}`);
+        alert(`Order Placed Successfully!`);
         clearCart();
-        navigate('/');
+        navigate(`/invoice/${data.invoice_number}`);
       } else {
         alert("Failed to place order. Please try again.");
       }
@@ -163,9 +165,21 @@ export default function Checkout() {
           </div>
 
           <div className="pt-6 border-t border-gray-200">
-            <div className="bg-gray-50 p-4 rounded-lg flex justify-between items-center">
-              <span className="text-lg font-medium text-gray-900">Total to Pay</span>
-              <span className="text-2xl font-bold text-primary">৳{totalCost.toFixed(2)}</span>
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+              <div className="flex justify-between items-center text-gray-600">
+                <span className="font-medium">Subtotal</span>
+                <span className="font-bold">৳{subTotal.toFixed(2)}</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center text-green-600">
+                  <span className="font-medium">Discount</span>
+                  <span className="font-bold">- ৳{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center pt-2 border-t border-gray-200 mt-2">
+                <span className="text-xl font-bold text-gray-900">Total to Pay</span>
+                <span className="text-2xl font-black text-primary">৳{totalCost.toFixed(2)}</span>
+              </div>
             </div>
           </div>
 

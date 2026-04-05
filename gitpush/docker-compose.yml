@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: moon_light_backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Connect to host's MySQL on Windows/Mac using host.docker.internal
+      # For Linux, use network_mode: "host" or the host's actual IP
+      - DATABASE_URL=mysql+pymysql://root:mamun%401974@host.docker.internal/moon_light_medico
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: moon_light_frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    depends_on:
+      - backend

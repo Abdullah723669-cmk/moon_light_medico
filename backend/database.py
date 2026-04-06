@@ -38,3 +38,10 @@ Base = declarative_base()
 
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = Session(bind=engine)
+    try:
+        yield db
+    finally:
+        db.close()

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from routers import medicines, prescriptions, orders
 import models
 from database import engine
@@ -19,6 +20,10 @@ app.add_middleware(
 app.include_router(medicines.router)
 app.include_router(prescriptions.router)
 app.include_router(orders.router)
+
+import os
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def read_root():

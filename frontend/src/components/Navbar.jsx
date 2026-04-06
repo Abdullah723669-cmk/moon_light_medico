@@ -19,6 +19,10 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="flex items-center space-x-6">
+            <Link to="/about" className="text-gray-600 hover:text-primary transition font-medium">About Us</Link>
+            <Link to="/contact" className="text-gray-600 hover:text-primary transition font-medium">Contact Us</Link>
+            <Link to="/policy" className="text-gray-600 hover:text-primary transition font-medium">Policy</Link>
+            <Link to="/blog" className="text-gray-600 hover:text-primary transition font-medium">Blog</Link>
             {user?.isAdmin && (
               <Link to="/admin" className="text-gray-600 hover:text-primary transition font-medium">Admin</Link>
             )}
@@ -31,10 +35,15 @@ export default function Navbar() {
               )}
             </Link>
             {user ? (
-              <button onClick={logout} className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition font-medium px-2 py-2">
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </button>
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                  You are logged in
+                </span>
+                <button onClick={logout} className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition font-medium px-2 py-2">
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
             ) : (
               <Link to="/login" className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-sky-600 transition">
                 Login

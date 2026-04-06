@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from database import get_db
 import models
+import schemas
 import shutil
 import os
 import uuid
@@ -29,3 +31,21 @@ async def upload_prescription(file: UploadFile = File(...), db: Session = Depend
     db.refresh(db_prescription)
 
     return {"id": db_prescription.id, "file_path": file_path, "status": db_prescription.status}
+
+@router.get("/", response_model=List[schemas.PrescriptionResponse])
+def get_all_prescriptions(db: Session = Depends(get_db)):
+    return db.query(models.Prescription).all()
+
+@router.delete("/{id}")
+def delete_prescription(id: int, db: Session = Depends(get_db)):
+    db_prescription = db.query(models.Prescription).filter(models.Prescription.id == id).first()
+    if not db_prescription:
+        raise HTTPException(status_code=404, detail="Prescription not found")
+    
+    # Optional: Delete file from local storage
+    if os.path.exists(db_prescription.file_path):
+        os.remove(db_prescription.file_path)
+        
+    db.delete(db_prescription)
+    db.commit()
+    return {"message": "Deleted successfully"}

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function Admin() {
+  const [activeTab, setActiveTab] = useState('medicines');
   const [medicines, setMedicines] = useState([]);
+  const [prescriptions, setPrescriptions] = useState([]);
   const [formData, setFormData] = useState({
     brand_name: '', generic_name: '', category: '', strength: '', is_rx: false, price: '', stock_quantity: '',
     stock_date: '', opening_stock: '', total_sales_quantity: '', closing_stock: ''
@@ -11,7 +13,13 @@ export default function Admin() {
 
   useEffect(() => {
     fetchMedicines();
+    fetchPrescriptions();
   }, []);
+
+  const fetchPrescriptions = async () => {
+    const res = await axios.get("http://localhost:8000/api/prescriptions/");
+    setPrescriptions(res.data);
+  };
 
   const fetchMedicines = async () => {
     const res = await axios.get("http://localhost:8000/api/medicines/");
@@ -92,10 +100,36 @@ export default function Admin() {
     }
   };
 
+  const handleDeleteRx = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/prescriptions/${id}`);
+      fetchPrescriptions();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-8">Admin Dashboard - Manage Medicines</h2>
+      <h2 className="text-3xl font-bold mb-6">Admin Dashboard</h2>
       
+      <div className="flex border-b mb-8 space-x-2">
+        <button 
+          className={`py-3 px-6 font-bold text-lg focus:outline-none transition-colors border-b-2 ${activeTab === 'medicines' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+          onClick={() => setActiveTab('medicines')}
+        >
+          Manage Medicines
+        </button>
+        <button 
+          className={`py-3 px-6 font-bold text-lg focus:outline-none transition-colors border-b-2 ${activeTab === 'prescriptions' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+          onClick={() => setActiveTab('prescriptions')}
+        >
+          Manage Prescriptions
+        </button>
+      </div>
+
+      {activeTab === 'medicines' && (
+        <div>
       <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">{editingId ? "Edit Medicine" : "Add New Medicine"}</h3>
@@ -172,6 +206,57 @@ export default function Admin() {
           </table>
         </div>
       </div>
+      </div>
+      )}
+
+      {activeTab === 'prescriptions' && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h3 className="text-xl font-bold mb-4">Uploaded Prescriptions (Total: {prescriptions.length})</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b bg-gray-50 text-gray-600 text-sm uppercase">
+                  <th className="p-3 rounded-tl-lg w-16">ID</th>
+                  <th className="p-3">File Path / Image</th>
+                  <th className="p-3 w-32">Status</th>
+                  <th className="p-3 rounded-tr-lg w-32">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {prescriptions.map((p) => (
+                  <tr key={p.id} className="border-b border-gray-100 hover:bg-blue-50/50 transition">
+                    <td className="p-3 text-gray-500">{p.id}</td>
+                    <td className="p-3 font-medium text-gray-900">
+                      <a 
+                        href={`http://localhost:8000/${p.file_path.replace(/\\/g, '/')}`} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="text-primary hover:underline flex items-center gap-2"
+                      >
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                        {p.file_path}
+                      </a>
+                    </td>
+                    <td className="p-3 text-sm text-gray-500">
+                      <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">
+                        {p.status}
+                      </span>
+                    </td>
+                    <td className="p-3 flex gap-2">
+                      <button onClick={() => handleDeleteRx(p.id)} className="text-red-500 hover:text-red-700 text-sm font-bold bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded transition shadow-sm">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+                {prescriptions.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="p-8 text-center text-gray-500 font-medium">No prescriptions uploaded yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

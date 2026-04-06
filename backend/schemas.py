@@ -71,3 +71,11 @@ class OrderResponse(OrderBase):
 
     class Config:
         from_attributes = True
+
+class PrescriptionResponse(BaseModel):
+    id: int
+    file_path: str
+    status: str
+
+    class Config:
+        from_attributes = True

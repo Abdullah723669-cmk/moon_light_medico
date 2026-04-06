@@ -26,7 +26,7 @@ export default function MedicineCard({ medicine }) {
     formData.append("file", file);
 
     try {
-      await axios.post("http://localhost:8000/api/prescriptions/upload", formData, {
+      await axios.post("/api/prescriptions/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       addToCart(medicine, quantity);

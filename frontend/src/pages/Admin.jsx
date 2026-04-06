@@ -17,12 +17,12 @@ export default function Admin() {
   }, []);
 
   const fetchPrescriptions = async () => {
-    const res = await axios.get("http://localhost:8000/api/prescriptions/");
+    const res = await axios.get("/api/prescriptions/");
     setPrescriptions(res.data);
   };
 
   const fetchMedicines = async () => {
-    const res = await axios.get("http://localhost:8000/api/medicines/");
+    const res = await axios.get("/api/medicines/");
     setMedicines(res.data);
   };
 
@@ -53,11 +53,11 @@ export default function Admin() {
 
     try {
       if (editingId) {
-        await axios.put(`http://localhost:8000/api/medicines/${editingId}`, payload);
+        await axios.put(`/api/medicines/${editingId}`, payload);
         alert("Medicine updated successfully");
         setEditingId(null);
       } else {
-        await axios.post("http://localhost:8000/api/medicines/", payload);
+        await axios.post("/api/medicines/", payload);
         alert("Medicine added successfully");
       }
       fetchMedicines();
@@ -93,7 +93,7 @@ export default function Admin() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/medicines/${id}`);
+      await axios.delete(`/api/medicines/${id}`);
       fetchMedicines();
     } catch (error) {
       console.error(error);
@@ -102,7 +102,7 @@ export default function Admin() {
 
   const handleDeleteRx = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/prescriptions/${id}`);
+      await axios.delete(`/api/prescriptions/${id}`);
       fetchPrescriptions();
     } catch (error) {
       console.error(error);
@@ -228,7 +228,7 @@ export default function Admin() {
                     <td className="p-3 text-gray-500">{p.id}</td>
                     <td className="p-3 font-medium text-gray-900">
                       <a 
-                        href={`http://localhost:8000/${p.file_path.replace(/\\/g, '/')}`} 
+                        href={`/${p.file_path.replace(/\\/g, '/')}`} 
                         target="_blank" 
                         rel="noreferrer" 
                         className="text-primary hover:underline flex items-center gap-2"

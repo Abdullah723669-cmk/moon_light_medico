@@ -7,7 +7,7 @@ export default function Invoice() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/orders/invoice/${invoice_number}`)
+    fetch(`/orders/invoice/${invoice_number}`)
       .then(res => res.json())
       .then(data => {
         setInvoice(data);

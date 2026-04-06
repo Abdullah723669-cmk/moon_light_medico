@@ -1,24 +1,46 @@
 version: "3.8"
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: moon_light_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: moon_light_medico
+      MYSQL_USER: moonlight_user
+      MYSQL_PASSWORD: moonlight_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
   backend:
     build: ./backend
     container_name: moon_light_backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      # Connect to host's MySQL on Windows/Mac using host.docker.internal
-      # For Linux, use network_mode: "host" or the host's actual IP
-      - DATABASE_URL=mysql+pymysql://root:mamun%401974@host.docker.internal/moon_light_medico
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: unless-stopped
+      - DB_USER=moonlight_user
+      - DB_PASSWORD=moonlight_password
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=moon_light_medico
+    depends_on:
+      - db
+    volumes:
+      - backend_uploads:/app/uploads
 
   frontend:
     build: ./frontend
     container_name: moon_light_frontend
+    restart: unless-stopped
     ports:
       - "80:80"
-    restart: unless-stopped
     depends_on:
       - backend
+
+volumes:
+  db_data:
+  backend_uploads:

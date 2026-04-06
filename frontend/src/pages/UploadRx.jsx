@@ -14,7 +14,7 @@ export default function UploadRx() {
       formData.append('file', file);
       
       try {
-        await axios.post("http://localhost:8000/api/prescriptions/upload", formData, {
+        await axios.post("/api/prescriptions/upload", formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         setSuccess(true);

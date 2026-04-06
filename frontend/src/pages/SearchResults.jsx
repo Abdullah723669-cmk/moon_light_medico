@@ -27,7 +27,7 @@ export default function SearchResults() {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/medicines/search?q=${encodeURIComponent(q)}`);
+        const res = await axios.get(`/api/medicines/search?q=${encodeURIComponent(q)}`);
         setMedicines(res.data);
       } catch (err) {
         console.error(err);

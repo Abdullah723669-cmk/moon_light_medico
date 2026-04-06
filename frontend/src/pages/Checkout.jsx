@@ -47,7 +47,7 @@ export default function Checkout() {
         quantity: item.quantity
       }));
 
-      const response = await fetch('http://localhost:8000/orders/', {
+      const response = await fetch('/orders/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

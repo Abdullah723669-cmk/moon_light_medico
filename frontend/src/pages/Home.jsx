@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, Pill } from 'lucide-react';
+import Chatbot from '../components/Chatbot';
 
 export default function Home() {
   const [query, setQuery] = useState("");
@@ -75,6 +76,8 @@ export default function Home() {
           <p className="text-lg text-gray-600 leading-relaxed">Get your medicines delivered right to your doorstep safely and securely.</p>
         </Link>
       </div>
+      {/* Chatbot specific to home page per user instruction */}
+      <Chatbot />
     </div>
   );
 }

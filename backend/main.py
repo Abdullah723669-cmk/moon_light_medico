@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routers import medicines, prescriptions, orders, chat
+from routers import medicines, prescriptions, orders, chat, stock
 import models
 from database import engine
 
@@ -21,6 +21,7 @@ app.include_router(medicines.router)
 app.include_router(prescriptions.router)
 app.include_router(orders.router)
 app.include_router(chat.router)
+app.include_router(stock.router)
 
 import os
 os.makedirs("uploads", exist_ok=True)

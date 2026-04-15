@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { CheckCircle } from 'lucide-react';
 
 export default function Checkout() {
   const { user } = useAuth();
-  const { cart, clearCart, discountAmount } = useCart();
-  const navigate = useNavigate();
+  const { cart, clearCart } = useCart();
 
   const [formData, setFormData] = useState({
     customer_name: '',
@@ -14,9 +14,10 @@ export default function Checkout() {
     address: '',
     payment_mode: 'COD'
   });
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
 
   const subTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const totalCost = Math.max(0, subTotal - (discountAmount || 0));
 
   useEffect(() => {
     if (user) {
@@ -41,7 +42,6 @@ export default function Checkout() {
     }
 
     try {
-      // Map shopping cart natively to backend payload items array
       const items = cart.map(item => ({
         medicine_id: item.id,
         quantity: item.quantity
@@ -52,17 +52,18 @@ export default function Checkout() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          total_cost: totalCost,
-          discount_amount: discountAmount || 0,
+          total_cost: subTotal,
+          discount_amount: 0,
+          delivery_charge: 0,
           items: items
         })
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Order Placed Successfully!`);
+        setOrderNumber(data.order_number);
+        setOrderPlaced(true);
         clearCart();
-        navigate(`/invoice/${data.invoice_number}`);
       } else {
         alert("Failed to place order. Please try again.");
       }
@@ -71,6 +72,27 @@ export default function Checkout() {
       alert("Error connecting to server. Is the backend running?");
     }
   };
+
+  // Order success screen
+  if (orderPlaced) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center">
+          <div className="bg-green-100 p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-12 h-12 text-green-600" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Order Submitted!</h2>
+          <p className="text-gray-500 mb-2">Your order <span className="font-bold text-primary">{orderNumber}</span> has been received.</p>
+          <p className="text-gray-500 mb-8 leading-relaxed">
+            Our pharmacy team will review and process your order shortly. You will receive your invoice once the order is confirmed.
+          </p>
+          <Link to="/" className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-sky-600 transition shadow-md">
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
@@ -167,19 +189,14 @@ export default function Checkout() {
           <div className="pt-6 border-t border-gray-200">
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <div className="flex justify-between items-center text-gray-600">
-                <span className="font-medium">Subtotal</span>
-                <span className="font-bold">৳{subTotal.toFixed(2)}</span>
+                <span className="font-medium">Items</span>
+                <span className="font-bold">{cart.length} item(s)</span>
               </div>
-              {discountAmount > 0 && (
-                <div className="flex justify-between items-center text-green-600">
-                  <span className="font-medium">Discount</span>
-                  <span className="font-bold">- ৳{discountAmount.toFixed(2)}</span>
-                </div>
-              )}
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 mt-2">
-                <span className="text-xl font-bold text-gray-900">Total to Pay</span>
-                <span className="text-2xl font-black text-primary">৳{totalCost.toFixed(2)}</span>
+                <span className="text-xl font-bold text-gray-900">Total</span>
+                <span className="text-2xl font-black text-primary">৳{subTotal.toFixed(2)}</span>
               </div>
+              <p className="text-xs text-gray-400 mt-2">* Discount and delivery charge will be applied by the pharmacy during order processing.</p>
             </div>
           </div>
 
@@ -188,7 +205,7 @@ export default function Checkout() {
               Back to Cart
             </Link>
             <button type="submit" className="flex-1 bg-primary text-white py-3 rounded-lg font-bold hover:bg-sky-600 transition shadow-md">
-              Place Order
+              Submit Order
             </button>
           </div>
         </form>

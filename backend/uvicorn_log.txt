@@ -1,0 +1,21 @@
+INFO:     Started server process [18260]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63466 - "GET /api/medicines/search?q=Amlodipine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63774 - "GET /api/medicines/search?q=Amlodipine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53830 - "GET /api/medicines/search?q= HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53831 - "GET /api/medicines/search?q= HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60703 - "GET /api/medicines/search?q=Amlodipine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54223 - "GET /api/medicines HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:54223 - "GET /api/medicines/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54223 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61135 - "GET /api/prescriptions HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:61135 - "GET /api/prescriptions/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62634 - "GET /api/orders HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:62634 - "GET /api/orders/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58329 - "GET /api/users HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53354 - "GET /api/medicines/search?q=Amlodipine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53356 - "GET /api/medicines/search?q=Amlodipine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55973 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55973 - "GET /openapi.json HTTP/1.1" 200 OK

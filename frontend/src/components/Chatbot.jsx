@@ -36,7 +36,20 @@ export default function Chatbot() {
       setMessages([...newMessages, response.data]);
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages([...newMessages, { role: 'assistant', content: "Sorry, I am having trouble connecting to the server. Please try again later." }]);
+      let errorMsg = "Sorry, I am having trouble connecting to the server. Please check your internet connection and try again.";
+      
+      const errorData = error.response?.data;
+      const detail = errorData?.detail || "";
+
+      if (error.response?.status === 429) {
+        errorMsg = "I'm currently at my processing limit. Please wait about 30 seconds and try again! 🕐";
+      } else if (detail.includes("DATABASE_ERROR")) {
+        errorMsg = "🔴 Database Connection Error: I'm having trouble retrieving data from the pharmacy inventory. Our team has been notified.";
+      } else if (error.response?.status === 500 && detail.includes("API key")) {
+        errorMsg = "⚠️ The AI service API key needs to be updated. Please contact the administrator.";
+      }
+      
+      setMessages([...newMessages, { role: 'assistant', content: errorMsg }]);
     } finally {
       setIsLoading(false);
     }

@@ -15,6 +15,7 @@ import Signup from './pages/Signup';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Invoice from './pages/Invoice';
+import AdminInvoice from './pages/AdminInvoice';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -32,6 +33,7 @@ function App() {
               <Route path="/upload-rx" element={<UploadRx />} />
               <Route path="/delivery" element={<FastDelivery />} />
               <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+              <Route path="/admin/invoice/:invoice_number" element={<AdminRoute><AdminInvoice /></AdminRoute>} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />

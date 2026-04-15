@@ -30,9 +30,16 @@ class MedicineUpdate(BaseModel):
     opening_stock: Optional[int] = None
     total_sales_quantity: Optional[int] = None
     closing_stock: Optional[int] = None
+    today_added: Optional[int] = None
+    today_returns: Optional[int] = None
 
 class MedicineResponse(MedicineBase):
     id: int
+    today_opening: Optional[int] = 0
+    today_added: Optional[int] = 0
+    today_sales: Optional[int] = 0
+    today_returns: Optional[int] = 0
+    today_closing: Optional[int] = 0
 
     class Config:
         from_attributes = True
@@ -56,10 +63,23 @@ class OrderBase(BaseModel):
     address: str
     total_cost: float
     discount_amount: float = 0.0
+    delivery_charge: float = 0.0
     payment_mode: str
 
 class OrderCreate(OrderBase):
     items: List[OrderItemBase] = []
+
+class OrderUpdate(BaseModel):
+    customer_name: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    total_cost: Optional[float] = None
+    discount_amount: Optional[float] = None
+    delivery_charge: Optional[float] = None
+    payment_mode: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    items: Optional[List[OrderItemBase]] = None
 
 class OrderResponse(OrderBase):
     id: int
@@ -67,6 +87,7 @@ class OrderResponse(OrderBase):
     invoice_number: Optional[str] = None
     status: str
     order_date: Optional[date] = None
+    notes: Optional[str] = None
     items: List[OrderItemResponse] = []
 
     class Config:
@@ -86,3 +107,19 @@ class ChatMessage(BaseModel):
     
 class ChatRequest(BaseModel):
     messages: List[ChatMessage]
+
+class StockBase(BaseModel):
+    date: date
+    medicine_id: int
+    brand_name: str
+    opening_stock: int
+    sales_quantity: int
+    return_sales_quantity: int
+    added_quantity: int
+    closing_stock: int
+
+class StockResponse(StockBase):
+    id: int
+
+    class Config:
+        from_attributes = True

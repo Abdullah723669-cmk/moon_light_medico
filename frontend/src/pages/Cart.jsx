@@ -1,38 +1,16 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
-import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Trash2, ShoppingBag } from 'lucide-react';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, clearCart, discountAmount, setDiscountAmount } = useCart();
-  const [discountText, setDiscountText] = useState('');
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
 
   const totalAmount = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
-  const applyDiscount = () => {
-    if (!discountText) {
-      setDiscountAmount(0);
-      return;
-    }
-    const val = discountText.trim();
-    if (val.endsWith('%')) {
-      const percentage = parseFloat(val);
-      if (!isNaN(percentage)) {
-        setDiscountAmount(totalAmount * (percentage / 100));
-      }
-    } else {
-      const flat = parseFloat(val);
-      if (!isNaN(flat)) {
-        setDiscountAmount(flat);
-      }
-    }
-  };
-
-  const currentPayable = Math.max(0, totalAmount - (discountAmount || 0));
 
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <ShoppingBag className="w-20 h-20 text-gray-300 mb-6" />
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Your Cart is Empty</h2>
         <p className="text-gray-600 mb-8">Looks like you haven't added any medicines yet.</p>
         <Link to="/" className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 transition shadow-md">
@@ -54,8 +32,9 @@ export default function Cart() {
               </div>
               <div className="flex-1 flex flex-col sm:flex-row justify-between w-full">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
-                  <p className="text-gray-500">{item.strength || 'Standard'}</p>
+                  <h3 className="text-lg font-bold text-gray-900">{item.brand_name || item.name}</h3>
+                  <p className="text-gray-500 text-sm">{item.generic_name || ''}</p>
+                  <p className="text-gray-400 text-xs">{item.strength || 'Standard'}</p>
                   <p className="text-primary font-medium mt-1">৳{item.price}</p>
                 </div>
                 <div className="flex items-center gap-4 mt-4 sm:mt-0">
@@ -82,36 +61,10 @@ export default function Cart() {
           ))}
         </ul>
         <div className="bg-gray-50 p-6 border-t border-gray-200">
-          
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <div className="flex-1 w-full flex items-center gap-2 max-w-sm">
-              <input 
-                type="text" 
-                placeholder="Discount (e.g. 5% or 50)" 
-                value={discountText}
-                onChange={(e) => setDiscountText(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary focus:border-primary"
-              />
-              <button onClick={applyDiscount} className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-700 transition">
-                Apply
-              </button>
-            </div>
-          </div>
-
           <div className="space-y-2 mb-6 bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex justify-between items-center text-gray-600">
-              <span className="font-medium">Subtotal</span>
-              <span className="font-bold">৳{totalAmount.toFixed(2)}</span>
-            </div>
-            {discountAmount > 0 && (
-              <div className="flex justify-between items-center text-green-600">
-                <span className="font-medium text-sm">Discount Applied</span>
-                <span className="font-bold">- ৳{discountAmount.toFixed(2)}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-center pt-3 border-t border-gray-200 mt-2">
-              <span className="text-lg font-bold text-gray-900">Payable Amount</span>
-              <span className="text-2xl font-black text-primary">৳{currentPayable.toFixed(2)}</span>
+            <div className="flex justify-between items-center pt-2">
+              <span className="text-lg font-bold text-gray-900">Total Amount</span>
+              <span className="text-2xl font-black text-primary">৳{totalAmount.toFixed(2)}</span>
             </div>
           </div>
 

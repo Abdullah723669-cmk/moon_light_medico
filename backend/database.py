@@ -1,18 +1,26 @@
 import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from urllib.parse import quote_plus
+# Load environment variables from .env file in the current directory
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+
 # Build database URL from environment variables (works for both local and Docker)
 DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "mamun%401974")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "mamun@1974")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "moon_light_medico")
 
+# URL-encode the password to handle special characters like '@'
+encoded_password = quote_plus(DB_PASSWORD)
+
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"mysql+pymysql://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
